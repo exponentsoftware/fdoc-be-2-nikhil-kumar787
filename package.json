@@ -1,0 +1,30 @@
+{
+  "name": "fdoc-be-2-nikhil-kumar787",
+  "version": "1.0.0",
+  "description": "## TODO List with filtering",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "nodemon index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/exponentsoftware/fdoc-be-2-nikhil-kumar787.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/exponentsoftware/fdoc-be-2-nikhil-kumar787/issues"
+  },
+  "homepage": "https://github.com/exponentsoftware/fdoc-be-2-nikhil-kumar787#readme",
+  "dependencies": {
+    "dotenv": "^10.0.0",
+    "express": "^4.17.1",
+    "express-async-handler": "^1.1.4",
+    "mongoose": "^6.0.7"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.13"
+  }
+}
