@@ -9,6 +9,7 @@ import env from "dotenv";
 env.config();
 
 import todoRoute from "./route/todoRoute.js";
+import authRoute from "./route/authRoute.js";
 
 const app = express();
 
@@ -20,6 +21,7 @@ app.get("/", function (req, res) {
 });
 
 app.use("/todo", todoRoute);
+app.use("/auth", authRoute);
 
 // DB conection
 mongoose.connect(process.env.MONGO_DB_URI, {

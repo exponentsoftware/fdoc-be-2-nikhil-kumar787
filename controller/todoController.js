@@ -3,53 +3,29 @@ import asyncHandler from "express-async-handler";
 import ErrorHandler from "../utils/errorHandler";
 import APIFeatures from "../utils/apiFeatures";
 
-const getAll = asyncHandler(async (req, res) => {
-  // const todo = await Todo.find();
-  const todo = await Todo.find().sort({ createdAt: -1 });
+// @desc    Get logged in for all todos
+// @route   GET /todo
+// @access  Private
+const getAll = asyncHandler(async (req, res, next) => {
+  const apiFeatures = new APIFeatures(
+    Todo.find().sort({ createdAt: -1 }),
+    req.query
+  ).filter();
+  let todos = await apiFeatures.query;
 
-  ///////////////// check if todo data is available or not//////////////////////////////
-  if (todo.length == 0) {
-    res.status(404).json({
-      success: false,
-      message: `Not Found any Todo Data`,
-      todo,
-    });
+  if (todos == 0) {
+    return next(new ErrorHandler("Not found any todo data", 404));
   }
 
-  let key = "";
-  for (let k in req.query) {
-    key = k;
-  }
-
-  if (req.query[key]) {
-    req.query[key] == "true" ? (req.query[key] = true) : "";
-    req.query[key] == "false" ? (req.query[key] = false) : "";
-
-    ///////////////// if it has query then fillter by given key//////////////////////////////
-    ///////////////// // route ex http://localhost:3000/todo/?status=true   ////////////////////
-
-    const response = await todo.filter((ele) => {
-      return ele[key] == req.query[key];
-    });
-    ///////////////// chcke filterd data found or Not//////////////////////////////
-    if (response.length <= 0) {
-      res.status(404).json({
-        success: false,
-        message: `Not Found ${key} of Todo`,
-        todo: response,
-      });
-    }
-    ///////////////// Filterd data response//////////////////////////////
-    res
-      .status(200)
-      .json({ success: true, message: `All ${key} of Todo`, todo: response });
-  } else {
-    ///////////////// respose all todo whithout filtering route (/)//////////////////////////////
-
-    res.status(200).json({ success: true, message: "All Todo", todo });
-  }
+  res.status(200).json({
+    success: true,
+    todos,
+  });
 });
 
+// @desc    fetching todo by it's id
+// @route   GET /todo/:id
+// @access  Private
 const getSingleTodo = asyncHandler(async (req, res) => {
   const todo = await Todo.findById(req.params.id);
 
@@ -63,6 +39,30 @@ const getSingleTodo = asyncHandler(async (req, res) => {
   });
 });
 
+// @desc    fetching only authorized user's todo
+// @route   GET /todo/user
+// @access  Private
+const getTodos = asyncHandler(async (req, res) => {
+  const { id } = req.body;
+  const apiFeatures = new APIFeatures(
+    Todo.find({ username: id }).sort({ createdAt: -1 }),
+    req.query
+  ).filter();
+  let todo = await apiFeatures.query;
+
+  if (!todo) {
+    return next(new ErrorHandler("Todo not found with this user_id", 404));
+  }
+
+  res.status(200).json({
+    success: true,
+    todo,
+  });
+});
+
+// @desc    Create new todo
+// @route   POST /todo
+// @access  Private
 const createTodo = asyncHandler(async (req, res, next) => {
   const { username, title, category } = req.body;
 
@@ -77,6 +77,9 @@ const createTodo = asyncHandler(async (req, res, next) => {
   }
 });
 
+// @desc    Updating single todo
+// @route   POST /todo/:id
+// @access  Private
 const updateTodo = asyncHandler(async (req, res, next) => {
   let todo = await Todo.findById(req.params.id);
 
@@ -96,6 +99,9 @@ const updateTodo = asyncHandler(async (req, res, next) => {
   });
 });
 
+// @desc    Deleting single todo
+// @route   POST /todo/:id
+// @access  Private
 const deleteTodo = asyncHandler(async (req, res, next) => {
   const todo = await Todo.findById(req.params.id);
 
@@ -111,4 +117,4 @@ const deleteTodo = asyncHandler(async (req, res, next) => {
   });
 });
 
-export { getAll, getSingleTodo, createTodo, updateTodo, deleteTodo };
+export { getAll, getSingleTodo, getTodos, createTodo, updateTodo, deleteTodo };

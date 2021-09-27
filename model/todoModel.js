@@ -10,8 +10,9 @@ const TodoSchema = new mongoose.Schema(
       default: false,
     },
     username: {
-      type: String,
+      type: mongoose.Schema.Types.ObjectId,
       required: true,
+      ref: "User",
     },
     category: {
       type: String,
