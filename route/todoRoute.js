@@ -11,8 +11,8 @@ import {
 import { protectAdmin } from "../middlewares/adminMiddleware";
 import { protectUser } from "../middlewares/userMiddleware";
 
-router.route("/").get(getAll);
-router.route("/user").get(getTodos);
+router.route("/").get(protectAdmin, getAll);
+router.route("/user").get(protectUser, getTodos);
 router
   .route("/:id")
   .get(getSingleTodo)
